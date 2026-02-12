@@ -1,47 +1,18 @@
-import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { ArrowRight, Eye, Star, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import ProductCard from "@/components/ProductCard";
-import { products, teams } from "@/data/products";
+import { featuredProducts, mostViewedProducts, categories } from "@/data/products";
 import { motion } from "framer-motion";
 
-const sizes = ["P", "M", "G", "GG"];
-const priceRanges = [
-  { label: "Até R$200", min: 0, max: 200 },
-  { label: "R$200-R$300", min: 200, max: 300 },
-  { label: "R$300+", min: 300, max: Infinity },
-];
+const categoryIcons: Record<string, string> = {
+  Brasileiro: "🇧🇷",
+  Europeu: "🇪🇺",
+  Seleções: "🌍",
+  Francês: "🇫🇷",
+};
 
 const Index = () => {
-  const [search, setSearch] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedPriceRange, setSelectedPriceRange] = useState<number | null>(null);
-
-  const filtered = useMemo(() => {
-    return products.filter((p) => {
-      if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.team.toLowerCase().includes(search.toLowerCase())) return false;
-      if (selectedTeam && p.team !== selectedTeam) return false;
-      if (selectedSize && !p.sizes.includes(selectedSize)) return false;
-      if (selectedPriceRange !== null) {
-        const range = priceRanges[selectedPriceRange];
-        if (p.price < range.min || p.price >= range.max) return false;
-      }
-      return true;
-    });
-  }, [search, selectedTeam, selectedSize, selectedPriceRange]);
-
-  const clearFilters = () => {
-    setSearch("");
-    setSelectedTeam(null);
-    setSelectedSize(null);
-    setSelectedPriceRange(null);
-  };
-
-  const hasFilters = search || selectedTeam || selectedSize || selectedPriceRange !== null;
-
   return (
     <div>
       {/* Hero */}
@@ -64,88 +35,74 @@ const Index = () => {
             <Button
               size="lg"
               className="gold-gradient text-primary-foreground font-bold hover:opacity-90 transition-opacity"
-              onClick={() => document.getElementById("produtos")?.scrollIntoView({ behavior: "smooth" })}
+              asChild
             >
-              Ver Camisas
+              <Link to="/camisas">Ver Todas as Camisas</Link>
             </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* Products */}
-      <section id="produtos" className="container py-10">
-        {/* Search */}
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por time ou camisa..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-card border-border"
-          />
+      {/* Categories */}
+      <section className="container py-10">
+        <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">Explore por Categoria</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {categories.map((cat, idx) => (
+            <motion.div
+              key={cat}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1, duration: 0.4 }}
+            >
+              <Link
+                to={`/camisas?categoria=${cat}`}
+                className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-card p-6 md:p-8 card-hover group"
+              >
+                <span className="text-3xl">{categoryIcons[cat] || "⚽"}</span>
+                <span className="font-display font-semibold text-lg group-hover:text-primary transition-colors">
+                  {cat}
+                </span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+            </motion.div>
+          ))}
         </div>
+      </section>
 
-        {/* Filters */}
-        <div className="space-y-3 mb-8">
-          <div className="flex flex-wrap gap-2">
-            <span className="text-xs text-muted-foreground self-center mr-1">Time:</span>
-            {teams.map((team) => (
-              <Badge
-                key={team}
-                variant={selectedTeam === team ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${selectedTeam === team ? "gold-gradient text-primary-foreground border-0" : "hover:border-primary"}`}
-                onClick={() => setSelectedTeam(selectedTeam === team ? null : team)}
-              >
-                {team}
-              </Badge>
-            ))}
+      {/* Featured */}
+      <section className="container py-10">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-2xl md:text-3xl font-bold">Destaques</h2>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="text-xs text-muted-foreground self-center mr-1">Tamanho:</span>
-            {sizes.map((size) => (
-              <Badge
-                key={size}
-                variant={selectedSize === size ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${selectedSize === size ? "gold-gradient text-primary-foreground border-0" : "hover:border-primary"}`}
-                onClick={() => setSelectedSize(selectedSize === size ? null : size)}
-              >
-                {size}
-              </Badge>
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="text-xs text-muted-foreground self-center mr-1">Preço:</span>
-            {priceRanges.map((range, idx) => (
-              <Badge
-                key={range.label}
-                variant={selectedPriceRange === idx ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${selectedPriceRange === idx ? "gold-gradient text-primary-foreground border-0" : "hover:border-primary"}`}
-                onClick={() => setSelectedPriceRange(selectedPriceRange === idx ? null : idx)}
-              >
-                {range.label}
-              </Badge>
-            ))}
-          </div>
-          {hasFilters && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-muted-foreground">
-              Limpar filtros
-            </Button>
-          )}
+          <Link to="/camisas" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+            Ver todas <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-
-        {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {filtered.map((product, idx) => (
+          {featuredProducts.map((product, idx) => (
             <ProductCard key={product.id} product={product} index={idx} />
           ))}
         </div>
+      </section>
 
-        {filtered.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-            <p className="text-lg">Nenhuma camisa encontrada.</p>
-            <Button variant="ghost" onClick={clearFilters} className="mt-2">Limpar filtros</Button>
+      {/* Most Viewed */}
+      <section className="container py-10 pb-16">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Flame className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-2xl md:text-3xl font-bold">Mais Vistas</h2>
           </div>
-        )}
+          <Link to="/camisas" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+            Ver todas <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {mostViewedProducts.map((product, idx) => (
+            <ProductCard key={product.id} product={product} index={idx} />
+          ))}
+        </div>
       </section>
     </div>
   );

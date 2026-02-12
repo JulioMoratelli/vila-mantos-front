@@ -13,6 +13,7 @@ import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
+import CamisasPage from "./pages/CamisasPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,8 @@ const App = () => (
             <Layout>
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/camisas" element={<CamisasPage />} />
+                <Route path="/camisas/:team" element={<CamisasPage />} />
                 <Route path="/produto/:id" element={<ProductPage />} />
                 <Route path="/carrinho" element={<CartPage />} />
                 <Route path="/auth" element={<AuthPage />} />
