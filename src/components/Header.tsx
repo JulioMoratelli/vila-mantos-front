@@ -30,7 +30,7 @@ const Header = () => {
           </SheetTrigger>
           <SheetContent side="left" className="bg-background border-border">
             <SheetHeader>
-              <SheetTitle className="font-display gold-text text-xl">FutShop</SheetTitle>
+              <SheetTitle className="font-display gold-text text-xl">Elite Times</SheetTitle>
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-4">
               {navLinks.map((link) => (
@@ -63,7 +63,7 @@ const Header = () => {
 
         {/* Logo */}
         <Link to="/" className="font-display text-2xl font-bold tracking-tight gold-text">
-          FutShop
+          Elite Times
         </Link>
 
         {/* Desktop nav */}

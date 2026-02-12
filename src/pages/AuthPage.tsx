@@ -68,7 +68,7 @@ const AuthPage = () => {
             </CardTitle>
             <CardDescription>
               {mode === "login"
-                ? "Acesse sua conta FutShop"
+                ? "Acesse sua conta Elite Times"
                 : mode === "register"
                 ? "Crie sua conta e comece a comprar"
                 : "Enviaremos um link de recuperação"}
