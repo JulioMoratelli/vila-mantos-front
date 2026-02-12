@@ -48,6 +48,9 @@ const Header = () => {
                   <Link to="/perfil" onClick={() => setMobileOpen(false)} className="text-foreground hover:text-primary transition-colors font-medium">
                     Meu Perfil
                   </Link>
+                  <Link to="/admin/produtos" onClick={() => setMobileOpen(false)} className="text-foreground hover:text-primary transition-colors font-medium">
+                    Gerenciar Produtos
+                  </Link>
                   <button onClick={() => { signOut(); setMobileOpen(false); }} className="text-left text-foreground hover:text-destructive transition-colors font-medium">
                     Sair
                   </button>
