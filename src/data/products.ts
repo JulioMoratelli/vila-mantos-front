@@ -12,6 +12,8 @@ export interface Product {
   reviewCount: number;
   isPromotion: boolean;
   category: string;
+  isFeatured?: boolean;
+  viewCount?: number;
 }
 
 export const products: Product[] = [
@@ -32,6 +34,8 @@ export const products: Product[] = [
     reviewCount: 234,
     isPromotion: true,
     category: "Brasileiro",
+    isFeatured: true,
+    viewCount: 1520,
   },
   {
     id: "2",
@@ -49,6 +53,7 @@ export const products: Product[] = [
     reviewCount: 189,
     isPromotion: false,
     category: "Brasileiro",
+    viewCount: 980,
   },
   {
     id: "3",
@@ -67,6 +72,8 @@ export const products: Product[] = [
     reviewCount: 412,
     isPromotion: true,
     category: "Europeu",
+    isFeatured: true,
+    viewCount: 2100,
   },
   {
     id: "4",
@@ -84,6 +91,7 @@ export const products: Product[] = [
     reviewCount: 356,
     isPromotion: false,
     category: "Europeu",
+    viewCount: 1800,
   },
   {
     id: "5",
@@ -102,6 +110,8 @@ export const products: Product[] = [
     reviewCount: 178,
     isPromotion: true,
     category: "Brasileiro",
+    isFeatured: true,
+    viewCount: 870,
   },
   {
     id: "6",
@@ -119,6 +129,7 @@ export const products: Product[] = [
     reviewCount: 145,
     isPromotion: false,
     category: "Brasileiro",
+    viewCount: 650,
   },
   {
     id: "7",
@@ -137,6 +148,8 @@ export const products: Product[] = [
     reviewCount: 267,
     isPromotion: true,
     category: "Europeu",
+    isFeatured: true,
+    viewCount: 1350,
   },
   {
     id: "8",
@@ -154,8 +167,90 @@ export const products: Product[] = [
     reviewCount: 523,
     isPromotion: false,
     category: "Seleções",
+    isFeatured: true,
+    viewCount: 2500,
+  },
+  {
+    id: "9",
+    name: "Camisa Santos I 2024",
+    team: "Santos",
+    description: "A camisa do Peixe para 2024. O branco clássico com detalhes que remetem à história gloriosa do clube.",
+    price: 219.90,
+    images: [
+      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&h=600&fit=crop",
+    ],
+    sizes: ["P", "M", "G", "GG"],
+    stock: 10,
+    rating: 4.6,
+    reviewCount: 198,
+    isPromotion: false,
+    category: "Brasileiro",
+    viewCount: 920,
+  },
+  {
+    id: "10",
+    name: "Camisa Santos II 2024",
+    team: "Santos",
+    description: "Camisa reserva do Santos FC 2024. Design alternativo com estilo único e moderno.",
+    price: 199.90,
+    originalPrice: 249.90,
+    images: [
+      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1551854304-dbbb1c3a6fba?w=600&h=600&fit=crop",
+    ],
+    sizes: ["P", "M", "G", "GG"],
+    stock: 7,
+    rating: 4.3,
+    reviewCount: 87,
+    isPromotion: true,
+    category: "Brasileiro",
+    viewCount: 540,
+  },
+  {
+    id: "11",
+    name: "Camisa PSG I 2024",
+    team: "PSG",
+    description: "Camisa oficial do Paris Saint-Germain 2024/25. O azul marinho parisiense com detalhes em vermelho.",
+    price: 369.90,
+    images: [
+      "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600&h=600&fit=crop",
+    ],
+    sizes: ["P", "M", "G", "GG"],
+    stock: 9,
+    rating: 4.7,
+    reviewCount: 312,
+    isPromotion: false,
+    category: "Francês",
+    viewCount: 1100,
+  },
+  {
+    id: "12",
+    name: "Camisa Olympique Marseille I 2024",
+    team: "Olympique Marseille",
+    description: "A tradicional camisa branca do Olympique de Marseille com detalhes em azul celeste.",
+    price: 329.90,
+    originalPrice: 399.90,
+    images: [
+      "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&h=600&fit=crop",
+    ],
+    sizes: ["P", "M", "G", "GG"],
+    stock: 6,
+    rating: 4.4,
+    reviewCount: 134,
+    isPromotion: true,
+    category: "Francês",
+    viewCount: 670,
   },
 ];
 
 export const teams = [...new Set(products.map((p) => p.team))];
 export const categories = [...new Set(products.map((p) => p.category))];
+
+export const getTeamsByCategory = (category: string) =>
+  [...new Set(products.filter((p) => p.category === category).map((p) => p.team))];
+
+export const featuredProducts = products.filter((p) => p.isFeatured);
+export const mostViewedProducts = [...products].sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0)).slice(0, 4);
