@@ -24,8 +24,8 @@ interface ProductForm {
   category: string;
   is_featured: boolean;
   is_new: boolean;
-  stock: string;
   sizes: string;
+  size_stock: Record<string, string>;
 }
 
 const emptyForm: ProductForm = {
@@ -38,8 +38,8 @@ const emptyForm: ProductForm = {
   category: "brasileiro",
   is_featured: false,
   is_new: false,
-  stock: "50",
   sizes: "P,M,G,GG",
+  size_stock: { P: "10", M: "10", G: "10", GG: "10" },
 };
 
 interface DBProduct {
@@ -102,6 +102,12 @@ const AdminProductsPage = () => {
   };
 
   const openEdit = (p: DBProduct) => {
+    const parsedSizeStock: Record<string, string> = {};
+    const sizes = p.sizes ?? ["P", "M", "G", "GG"];
+    const sizeStockData = (p as any).size_stock as Record<string, number> | null;
+    sizes.forEach((s) => {
+      parsedSizeStock[s] = String(sizeStockData?.[s] ?? p.stock ?? 0);
+    });
     setForm({
       name: p.name,
       team: p.team,
@@ -112,8 +118,8 @@ const AdminProductsPage = () => {
       category: p.category,
       is_featured: p.is_featured ?? false,
       is_new: p.is_new ?? false,
-      stock: String(p.stock ?? 50),
-      sizes: (p.sizes ?? ["P", "M", "G", "GG"]).join(","),
+      sizes: sizes.join(","),
+      size_stock: parsedSizeStock,
     });
     setEditingId(p.id);
     setDialogOpen(true);
@@ -122,6 +128,13 @@ const AdminProductsPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+
+    const sizesArray = form.sizes.split(",").map((s) => s.trim()).filter(Boolean);
+    const sizeStockObj: Record<string, number> = {};
+    sizesArray.forEach((s) => {
+      sizeStockObj[s] = parseInt(form.size_stock[s]) || 0;
+    });
+    const totalStock = Object.values(sizeStockObj).reduce((a, b) => a + b, 0);
 
     const payload = {
       name: form.name,
@@ -133,8 +146,9 @@ const AdminProductsPage = () => {
       category: form.category,
       is_featured: form.is_featured,
       is_new: form.is_new,
-      stock: parseInt(form.stock) || 50,
-      sizes: form.sizes.split(",").map((s) => s.trim()).filter(Boolean),
+      stock: totalStock,
+      sizes: sizesArray,
+      size_stock: sizeStockObj,
     };
 
     if (editingId) {
@@ -263,30 +277,59 @@ const AdminProductsPage = () => {
               <Input id="image" name="image" value={form.image} onChange={handleChange} className="bg-secondary border-border" placeholder="https://..." />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoria</Label>
-                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger className="bg-secondary border-border">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="brasileiro">Brasileiro</SelectItem>
-                    <SelectItem value="europeu">Europeu</SelectItem>
-                    <SelectItem value="frances">Francês</SelectItem>
-                    <SelectItem value="selecoes">Seleções</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stock">Estoque</Label>
-                <Input id="stock" name="stock" type="number" value={form.stock} onChange={handleChange} className="bg-secondary border-border" />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="category">Categoria</Label>
+              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                <SelectTrigger className="bg-secondary border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="brasileiro">Brasileiro</SelectItem>
+                  <SelectItem value="europeu">Europeu</SelectItem>
+                  <SelectItem value="frances">Francês</SelectItem>
+                  <SelectItem value="selecoes">Seleções</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="sizes">Tamanhos (separados por vírgula)</Label>
-              <Input id="sizes" name="sizes" value={form.sizes} onChange={handleChange} className="bg-secondary border-border" placeholder="P,M,G,GG" />
+              <Input
+                id="sizes"
+                name="sizes"
+                value={form.sizes}
+                onChange={(e) => {
+                  const newSizes = e.target.value;
+                  const sizesArr = newSizes.split(",").map((s) => s.trim()).filter(Boolean);
+                  const newSizeStock = { ...form.size_stock };
+                  sizesArr.forEach((s) => {
+                    if (!(s in newSizeStock)) newSizeStock[s] = "0";
+                  });
+                  setForm({ ...form, sizes: newSizes, size_stock: newSizeStock });
+                }}
+                className="bg-secondary border-border"
+                placeholder="P,M,G,GG"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Estoque por Tamanho</Label>
+              <div className="grid grid-cols-4 gap-2">
+                {form.sizes.split(",").map((s) => s.trim()).filter(Boolean).map((size) => (
+                  <div key={size} className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">{size}</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={form.size_stock[size] ?? "0"}
+                      onChange={(e) =>
+                        setForm({ ...form, size_stock: { ...form.size_stock, [size]: e.target.value } })
+                      }
+                      className="bg-secondary border-border"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex gap-6">

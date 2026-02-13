@@ -154,6 +154,7 @@ export type Database = {
           price: number
           rating: number | null
           review_count: number | null
+          size_stock: Json | null
           sizes: string[] | null
           stock: number | null
           team: string
@@ -174,6 +175,7 @@ export type Database = {
           price: number
           rating?: number | null
           review_count?: number | null
+          size_stock?: Json | null
           sizes?: string[] | null
           stock?: number | null
           team: string
@@ -194,6 +196,7 @@ export type Database = {
           price?: number
           rating?: number | null
           review_count?: number | null
+          size_stock?: Json | null
           sizes?: string[] | null
           stock?: number | null
           team?: string
