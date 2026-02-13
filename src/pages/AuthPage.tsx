@@ -45,7 +45,7 @@ const AuthPage = () => {
         });
         if (error) throw error;
 
-        toast.success("Conta criada! Verifique seu email para confirmar.");
+        toast.success("Conta criada! faça o login.");
       } else {
         const { error } = await resetPassword(form.email);
         if (error) throw error;
