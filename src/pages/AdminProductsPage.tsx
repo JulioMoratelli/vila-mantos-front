@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Plus, Pencil, Trash2, Package } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import ProductImageUpload from "@/components/ProductImageUpload";
 
 interface ProductForm {
   name: string;
@@ -20,7 +21,7 @@ interface ProductForm {
   description: string;
   price: string;
   original_price: string;
-  image: string;
+  images: string[];
   category: string;
   is_featured: boolean;
   is_new: boolean;
@@ -34,7 +35,7 @@ const emptyForm: ProductForm = {
   description: "",
   price: "",
   original_price: "",
-  image: "",
+  images: [],
   category: "brasileiro",
   is_featured: false,
   is_new: false,
@@ -114,7 +115,7 @@ const AdminProductsPage = () => {
       description: p.description,
       price: String(p.price),
       original_price: p.original_price ? String(p.original_price) : "",
-      image: p.image,
+      images: [p.image, ...((p as any).images || [])].filter(Boolean),
       category: p.category,
       is_featured: p.is_featured ?? false,
       is_new: p.is_new ?? false,
@@ -142,7 +143,8 @@ const AdminProductsPage = () => {
       description: form.description,
       price: parseFloat(form.price),
       original_price: form.original_price ? parseFloat(form.original_price) : null,
-      image: form.image,
+      image: form.images[0] || "",
+      images: form.images.slice(1),
       category: form.category,
       is_featured: form.is_featured,
       is_new: form.is_new,
@@ -272,10 +274,10 @@ const AdminProductsPage = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="image">URL da Imagem</Label>
-              <Input id="image" name="image" value={form.image} onChange={handleChange} className="bg-secondary border-border" placeholder="https://..." />
-            </div>
+            <ProductImageUpload
+              images={form.images}
+              onChange={(imgs) => setForm({ ...form, images: imgs })}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="category">Categoria</Label>
