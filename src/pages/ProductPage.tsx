@@ -1,23 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, Truck, Shield, ArrowLeft, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/StarRating";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCart();
-  const product = products.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const mapProduct = (p): Product => ({
+      id: p.id,
+      name: p.name,
+      team: p.team,
+      description: p.description,
+      price: Number(p.price),
+      originalPrice: p.original_price ? Number(p.original_price) : undefined,
+      images: [p.image, ...(p.images || [])].filter(Boolean),
+      sizes: p.sizes || ["P", "M", "G", "GG"],
+      stock: p.stock ?? 0,
+      rating: Number(p.rating ?? 4.5),
+      reviewCount: p.review_count ?? 0,
+      isPromotion: !!p.original_price,
+      category: p.category,
+      isFeatured: p.is_featured ?? false,
+      viewCount: p.view_count ?? 0,
+    });
+
+    const load = async () => {
+      if (!id) return;
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) {
+        toast.error("Erro ao carregar produto");
+      } else if (data) {
+        setProduct(mapProduct(data));
+      }
+      setLoading(false);
+    };
+
+    load();
+  }, [id]);
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  if (loading) {
+    return (
+      <div className="container py-16 text-center">
+        <p className="text-muted-foreground text-lg">Carregando produto...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

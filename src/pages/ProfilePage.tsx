@@ -25,7 +25,7 @@ const ProfilePage = () => {
     city: "",
     state: "",
   });
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<import("@/integrations/supabase/types").Database["public"]["Tables"]["orders"]["Row"][]>([]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -221,7 +221,11 @@ const ProfilePage = () => {
               ) : (
                 <div className="space-y-3">
                   {orders.map((order) => (
-                    <div key={order.id} className="p-4 rounded-md border border-border space-y-1">
+                    <div
+                      key={order.id}
+                      className="p-4 rounded-md border border-border space-y-1 cursor-pointer hover:border-primary/50 transition-colors"
+                      onClick={() => navigate(`/pedido/${order.id}`)}
+                    >
                       <div className="flex justify-between items-center">
                         <span className="font-semibold text-sm">Pedido #{order.order_number}</span>
                         <span className="text-xs text-primary capitalize">{order.status}</span>

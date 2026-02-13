@@ -66,7 +66,7 @@ const Header = () => {
 
         {/* Logo */}
         <Link to="/" className="font-display text-2xl font-bold tracking-tight gold-text">
-          Elite Times
+          <img src="/logo-black.png" alt="Elite Times" className="h-28 mt-3 w-auto" />
         </Link>
 
         {/* Desktop nav */}
