@@ -10,10 +10,20 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    allowedHosts: [
+      "credari-vila-mantos-front.thegkr.easypanel.host",
+      "vilamantos.com.br",
+      "www.vilamantos.com.br",
+    ],
   },
   preview: {
     host: true,
     port: Number(process.env.PORT ?? 8080),
+    allowedHosts: [
+      "credari-vila-mantos-front.thegkr.easypanel.host",
+      "vilamantos.com.br",
+      "www.vilamantos.com.br",
+    ],
   },
   plugins: [react()].filter(Boolean),
   resolve: {
